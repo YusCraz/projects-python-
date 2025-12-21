@@ -1,0 +1,169 @@
+# =====================================================
+# TEXT-BASED ADVENTURE GAME (BEGINNER PYTHON PROJECT)
+# =====================================================
+# This program is a simple text-based game where:
+# - The player moves between rooms using text commands
+# - The player can pick up items
+# - The game runs in a loop until the player quits
+#
+# Concepts used:
+# - Dictionaries (store rooms and map)
+# - Lists (inventory)
+# - While loop (keep game running)
+# - If / elif / else (decision making)
+# - String methods (input handling)
+# =====================================================
+
+
+# -----------------------------------------------------
+# GAME MAP (DICTIONARY)
+# -----------------------------------------------------
+# WHY dictionary?
+# - We need to store rooms by name
+# - Each room needs multiple details
+# - Dictionaries allow key-value storage
+#
+# Structure:
+# rooms = {
+#   "RoomName": {
+#       "description": "text",
+#       "direction": "AnotherRoom",
+#       "item": "item_name" or None
+#   }
+# }
+
+rooms = {
+    "Entrance": {
+        "description": "You are at the entrance of a dark dungeon. There are doors to the north and east.",
+        "north": "Hallway",
+        "east": "Armory",
+        "item": None
+    },
+
+    "Hallway": {
+        "description": "A long hallway lit by torches. There is a door to the south and east.",
+        "south": "Entrance",
+        "east": "Library",
+        "item": "key"
+    },
+
+    "Armory": {
+        "description": "An old armory filled with rusty weapons. There is a door to the west.",
+        "west": "Entrance",
+        "item": "shield"
+    },
+
+    "Library": {
+        "description": "A dusty library with ancient books. There is a door to the west.",
+        "west": "Hallway",
+        "item": "magic book"
+    }
+}
+
+
+# -----------------------------------------------------
+# PLAYER STATE VARIABLES
+# -----------------------------------------------------
+# current_room keeps track of where the player is
+current_room = "Entrance"
+
+# inventory stores items the player picks up
+inventory = []
+
+
+# -----------------------------------------------------
+# GAME INTRODUCTION
+# -----------------------------------------------------
+print("Welcome to the Text-Based Adventure Game!")
+print("Available commands:")
+print(" - go north / go south / go east / go west")
+print(" - take item")
+print(" - inventory")
+print(" - quit\n")
+
+
+# -----------------------------------------------------
+# MAIN GAME LOOP
+# -----------------------------------------------------
+# WHY while True?
+# - Games should keep running
+# - Player decides when to quit
+while True:
+
+    # Get the current room dictionary
+    room = rooms[current_room]
+
+    # Display current location and description
+    print(f"Location: {current_room}")
+    print(room["description"])
+
+    # Take user input
+    # lower() -> ignores case
+    # strip() -> removes extra spaces
+    command = input("\nEnter your command: ").lower().strip()
+
+
+    # -------------------------------------------------
+    # QUIT GAME
+    # -------------------------------------------------
+    if command == "quit":
+        print("\nThanks for playing! Goodbye.")
+        break   # Exit the loop and end game
+
+
+    # -------------------------------------------------
+    # MOVE PLAYER
+    # -------------------------------------------------
+    # startswith("go ") checks movement commands
+    elif command.startswith("go "):
+
+        # Extract direction from input
+        # Example: "go north" -> "north"
+        direction = command[3:]
+
+        # Check if movement is allowed from this room
+        if direction in room:
+            current_room = room[direction]
+            print(f"\nYou move {direction}.\n")
+        else:
+            print("\nYou can't go that way!\n")
+
+
+    # -------------------------------------------------
+    # PICK UP ITEM
+    # -------------------------------------------------
+    elif command.startswith("take "):
+
+        # Extract item name
+        # Example: "take key" -> "key"
+        item_name = command[5:]
+
+        # Check if the room has that item
+        if room["item"] == item_name:
+            inventory.append(item_name)   # Add to inventory
+            room["item"] = None           # Remove from room
+            print(f"\nYou picked up the {item_name}!\n")
+        else:
+            print(f"\nThere is no {item_name} here.\n")
+
+
+    # -------------------------------------------------
+    # CHECK INVENTORY
+    # -------------------------------------------------
+    elif command == "inventory":
+
+        # Check if inventory has items
+        if inventory:
+            print("\nYour inventory:")
+            for item in inventory:
+                print("-", item)
+            print()
+        else:
+            print("\nYour inventory is empty.\n")
+
+
+    # -------------------------------------------------
+    # INVALID COMMAND
+    # -------------------------------------------------
+    else:
+        print("\nInvalid command. Try again.\n")
